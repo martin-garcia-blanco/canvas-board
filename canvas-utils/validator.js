@@ -1,8 +1,8 @@
 const { ContentError } = require('./errors')
-const validator = {
 
+const validator = {
     string(target){
-        if( typeof a !== 'string' ) throw new ContentError(`${target} is not a string`)
+        if( typeof target !== 'string' ) throw new ContentError(`${target} is not a string`)
     }
 }
 
