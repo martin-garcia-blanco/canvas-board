@@ -8,7 +8,7 @@ const { database } = require('canvas-data')
 const bodyparser = require('body-parser')
 const jsonBodyParser = bodyparser.json()
 
-const api = express
+const api = express()
 
 api.use(cors)
 

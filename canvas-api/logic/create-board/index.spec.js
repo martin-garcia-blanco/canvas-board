@@ -1,18 +1,19 @@
 require('dotenv').config()
-const { env:{ DB_URL_TEST } } = process
+const { env:{ TEST_DB_URL } } = process
 const { expect } = require('chai')
 const createBoard = require('.')
 const { database, models: { Board } } = require('canvas-data')
 
 describe('logic createBoard test', ()=>{
-    before(() => database.connect(DB_URL_TEST))
+    before(() => database.connect(TEST_DB_URL))
+
+    beforeEach(async() => await Board.deleteMany() )
 
     it('There isnt a board so should create one', async() => {
         await createBoard()  
         
-        const board = Board.find()
+        const board = await Board.findOne()
         const defaultName = 'New Board'
-
         expect(board).to.exist
         expect(board.name).to.equal(defaultName)
         expect(board.sections).to.be.instanceOf(Array)
@@ -21,8 +22,8 @@ describe('logic createBoard test', ()=>{
 
 
     describe('when board already exists', () => {
-        beforeEach(() =>
-            Board.create()
+        beforeEach(async() =>
+            await Board.create({})
         )
 
         it('should fail on already existing board', () =>
