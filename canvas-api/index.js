@@ -3,6 +3,7 @@ const express = require('express')
 const { name, version } = require('./package.json')
 const { env: { PORT, DB_URL } } = process
 const cors = require('./utils/cors')
+const {createNote, createSection, deleteNote, deleteSection,updateBoard, updateNote} = require('./logic')
 const { database } = require('canvas-data')
 const bodyparser = require('body-parser')
 const jsonBodyParser = bodyparser.json()
@@ -47,10 +48,10 @@ api.delete('/section:id', (req,res)=>{
 })
 
 api.post('/note', bodyparser,(req,res)=>{
-    const { body: { text } } = req
+    const { body: { text, sectionId } } = req
 
     try{
-        createNote(text)
+        createNote(sectionId,text)
         .then(() => res.status(201).end())
         .catch( error => {
             return res.status(500).json({error})
@@ -61,7 +62,7 @@ api.post('/note', bodyparser,(req,res)=>{
 })
 
 api.put('/note:id', jsonBodyParser, (req,res) => {
-    const { paramas: { id }, body: { text } } = req
+    const { paramas: { id }, body: { text, sectionId } } = req
 
     try{
         updateNote(id, text)
@@ -76,11 +77,11 @@ api.put('/note:id', jsonBodyParser, (req,res) => {
     }
 })
 
-api.delete('/note:id', (req,res)=>{
-    const { params: { id }} = req
+api.delete('/note:id', jsonBodyParser, (req,res)=>{
+    const { params: { id }, body: { sectionId }} = req
 
     try {
-        deleteNote(id)
+        deleteNote(id,sectionId)
         .then(() => res.status(204).end())
         .catch(error => {
             if(error instanceof NotFoundError) return res.status(404).json(error.message)
