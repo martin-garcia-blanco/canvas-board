@@ -3,7 +3,7 @@ const express = require('express')
 const { name, version } = require('./package.json')
 const { env: { PORT, DB_URL } } = process
 const cors = require('./utils/cors')
-const {createNote, createSection, deleteNote, deleteSection,updateBoard, updateNote} = require('./logic')
+const {createNote, createSection, createBoard, deleteNote, deleteSection,updateBoard, updateNote} = require('./logic')
 const { database } = require('canvas-data')
 const bodyparser = require('body-parser')
 const jsonBodyParser = bodyparser.json()
@@ -22,6 +22,18 @@ api.post('/section', jsonBodyParser, (req,res)=>{
 
     try{
         createSection(name)
+        .then(() => res.status(201).end())
+        .catch( error => {
+            return res.status(500).json({error})
+        })
+    } catch({message}){
+        res.status(400).json({message})
+    }
+})
+
+api.post('/board', (req,res)=>{
+    try{
+        createBoard()
         .then(() => res.status(201).end())
         .catch( error => {
             return res.status(500).json({error})

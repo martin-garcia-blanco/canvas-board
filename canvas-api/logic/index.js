@@ -4,5 +4,6 @@ module.exports = {
     deleteNote: require('./delete-note'),
     deleteSection: require('./delete-section'),
     updateBoard: require('./update-board'),
-    updateNote: require('./update-note')
+    updateNote: require('./update-note'),
+    createBoard: require('./create-board')
 }
