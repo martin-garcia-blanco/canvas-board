@@ -18,10 +18,10 @@ api.options('*', cors,(req,res)=>{
 
 
 api.post('/section', jsonBodyParser, (req,res)=>{
-    const { body: {name} } = req
+    const { body: {name, boardId} } = req
 
     try{
-        createSection(name)
+        createSection(boardId, name)
         .then(() => res.status(201).end())
         .catch( error => {
             return res.status(500).json({error})

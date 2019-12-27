@@ -1,17 +1,17 @@
 require('dotenv').config()
-const { env:{ TEST_DB_URL } } = process
+const { env: { TEST_DB_URL } } = process
 const { expect } = require('chai')
 const createBoard = require('.')
 const { database, models: { Board } } = require('canvas-data')
 
-describe('logic createBoard test', ()=>{
+describe('logic createBoard test', () => {
     before(() => database.connect(TEST_DB_URL))
 
-    beforeEach(async() => await Board.deleteMany() )
+    beforeEach(async () => await Board.deleteMany())
 
-    it('There isnt a board so should create one', async() => {
-        await createBoard()  
-        
+    it('There isnt a board so should create one', async () => {
+        await createBoard()
+
         const board = await Board.findOne()
         const defaultName = 'New Board'
         expect(board).to.exist
@@ -22,22 +22,22 @@ describe('logic createBoard test', ()=>{
 
 
     describe('when board already exists', () => {
-        beforeEach(async() =>
+        beforeEach(async () =>
             await Board.create({})
         )
 
         it('should fail on already existing board', () =>
-            createBoard() 
-            .then(() => {
-                throw Error('should not reach this point')
-            })
-            .catch(error => {
-                expect(error).to.exist
-                expect(error.message).to.exist
-                expect(typeof error.message).to.equal('string')
-                expect(error.message.length).to.be.greaterThan(0)
-                expect(error.message).to.equal(`board already exists`)
-            })
+            createBoard()
+                .then(() => {
+                    throw Error('should not reach this point')
+                })
+                .catch(error => {
+                    expect(error).to.exist
+                    expect(error.message).to.exist
+                    expect(typeof error.message).to.equal('string')
+                    expect(error.message.length).to.be.greaterThan(0)
+                    expect(error.message).to.equal(`board already exists`)
+                })
         )
     })
 
