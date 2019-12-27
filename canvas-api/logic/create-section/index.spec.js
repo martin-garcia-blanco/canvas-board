@@ -5,7 +5,6 @@ const createSection = require('./')
 const { database, ObjectId, models: { Board, Section } } = require('canvas-data')
 const { errors:{ ContentError }} = require('canvas-utils')
 
-
 describe('logic createSection test', () => {
 
     before(() => database.connect(TEST_DB_URL))
@@ -15,14 +14,12 @@ describe('logic createSection test', () => {
 
     beforeEach(async () => {
         await Promise.all([Board.deleteMany(), Section.deleteMany()])
-
         const board = await Board.create({})
         boardId = board.id
     })
 
     it('Should create a new section', async () => {
         const sectionId = await createSection(boardId, name)
-
         const newSection = await Section.findById(sectionId)
 
         expect(newSection).to.exist
@@ -47,7 +44,6 @@ describe('logic createSection test', () => {
         }
     })
 
-
     it('Should throw a NotFoundError, wrong boardId', async () => {
         expect(() => createSection('')).to.throw(ContentError, ' is not a valid id')
         expect(() => createSection(' \t\r')).to.throw(ContentError, ' is not a valid id')
@@ -63,9 +59,5 @@ describe('logic createSection test', () => {
         expect(() => createSection(boardId, '')).to.throw(ContentError, ' is empty or blank')
         expect(() => createSection(boardId, ' \t\r')).to.throw(ContentError, ' is empty or blank')
     })
-
-
-
-
-
+    after(() => Promise.all([Board.deleteMany(), Section.deleteMany()]))
 })

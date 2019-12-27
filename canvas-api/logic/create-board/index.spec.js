@@ -20,7 +20,6 @@ describe('logic createBoard test', () => {
         expect(board.sections.length).to.equal(0)
     })
 
-
     describe('when board already exists', () => {
         beforeEach(async () =>
             await Board.create({})
@@ -40,7 +39,5 @@ describe('logic createBoard test', () => {
                 })
         )
     })
-
-
     after(() => Board.deleteMany())
 })

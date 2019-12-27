@@ -6,7 +6,7 @@
     "scripts": {
         "start": "node .",
         "debug": "node inspect .",
-        "test": "npx mocha logic/*/*.spec.js",
+        "test": "npx mocha logic/**/*.spec.js",
         "test-debug": "npx mocha inspect logic/*/*.spec.js"
     },
     "dependencies": {
