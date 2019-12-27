@@ -3,6 +3,8 @@ const { env: { TEST_DB_URL } } = process
 const { expect } = require('chai')
 const createSection = require('./')
 const { database, ObjectId, models: { Board, Section } } = require('canvas-data')
+const { errors:{ ContentError }} = require('canvas-utils')
+
 
 describe('logic createSection test', () => {
 
@@ -14,23 +16,24 @@ describe('logic createSection test', () => {
     beforeEach(async () => {
         await Promise.all([Board.deleteMany(), Section.deleteMany()])
 
-        const board = Board.create({})
+        const board = await Board.create({})
         boardId = board.id
     })
 
     it('Should create a new section', async () => {
-        const section = await createSection(boardId, name)
+        const sectionId = await createSection(boardId, name)
 
-        const newSection = await Section.findById(section.id)
+        const newSection = await Section.findById(sectionId)
 
         expect(newSection).to.exist
         expect(newSection.name).to.be.equal(name)
-        expect(newSection.id.toString()).to.be.equal(section.id.toString())
+        expect(newSection.id).to.be.equal(sectionId)
         expect(newSection.notes.length).to.be.equal(0)
     })
 
     it('Should throw and error, invalid boardId', async () => {
         const fakeId = ObjectId().toString()
+        const fakeName = 'fakeName'
 
         try {
             await createSection(fakeId, name)
@@ -46,19 +49,19 @@ describe('logic createSection test', () => {
 
 
     it('Should throw a NotFoundError, wrong boardId', async () => {
-        expect(() => createSection('')).to.throw(ContentError, 'boardId is empty or blank')
-        expect(() => createSection(' \t\r')).to.throw(ContentError, 'boardId is empty or blank')
+        expect(() => createSection('')).to.throw(ContentError, ' is not a valid id')
+        expect(() => createSection(' \t\r')).to.throw(ContentError, ' is not a valid id')
     })
 
     it('Should throw a ContentError, wrong name type or empty', async () => {
-        expect(() => createSection(boardId, 1)).to.throw(TypeError, '1 is not a string')
-        expect(() => createSection(boardId, true)).to.throw(TypeError, 'true is not a string')
-        expect(() => createSection(boardId, [])).to.throw(TypeError, ' is not a string')
-        expect(() => createSection(boardId, {})).to.throw(TypeError, '[object Object] is not a string')
-        expect(() => createSection(boardId, undefined)).to.throw(TypeError, 'undefined is not a string')
-        expect(() => createSection(boardId, null)).to.throw(TypeError, 'null is not a string')
-        expect(() => createSection(boardId, '')).to.throw(ContentError, 'userId is empty or blank')
-        expect(() => createSection(boardId, ' \t\r')).to.throw(ContentError, 'userId is empty or blank')
+        expect(() => createSection(boardId, 1)).to.throw(ContentError, '1 is not a string')
+        expect(() => createSection(boardId, true)).to.throw(ContentError, 'true is not a string')
+        expect(() => createSection(boardId, [])).to.throw(ContentError, ' is not a string')
+        expect(() => createSection(boardId, {})).to.throw(ContentError, '[object Object] is not a string')
+        expect(() => createSection(boardId, undefined)).to.throw(ContentError, 'undefined is not a string')
+        expect(() => createSection(boardId, null)).to.throw(ContentError, 'null is not a string')
+        expect(() => createSection(boardId, '')).to.throw(ContentError, ' is empty or blank')
+        expect(() => createSection(boardId, ' \t\r')).to.throw(ContentError, ' is empty or blank')
     })
 
 
