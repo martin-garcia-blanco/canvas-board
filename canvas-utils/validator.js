@@ -6,8 +6,8 @@ const validator = {
     }
 }
 
-validator.string.notVoid = function(target) {
-    if(!target.trim().length) throw new ContentError(`${target} is empty or blank`)
+validator.string.notVoid = function(target, name) {
+    if(!target.trim().length) throw new ContentError(`${name} is empty or blank`)
 }
 
 module.exports = validator
