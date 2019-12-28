@@ -23,7 +23,5 @@ module.exports = function(sectionId, noteId, noteName){
             if(note.id === noteId) note.text = noteName
         })
         await section.save()
-
-        return 3
     })()
 }

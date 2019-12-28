@@ -53,22 +53,6 @@ describe('logic updateNote test', () => {
         }
     })
 
-    /* it('Should throw and error, unexpected noteId', async () => {
-        const fakeId = ObjectId().toString()
-        const fakeName = 'fakeName'
-
-        try {
-            await updateNote(sectionId, fakeId, fakeName)
-            throw new Error('Should not reach this point')
-        } catch (error) {
-            expect(error).to.exist
-            expect(error.message).to.exist
-            expect(typeof error.message).to.equal('string')
-            expect(error.message.length).to.be.greaterThan(0)
-            expect(error.message).to.equal(`note with id ${fakeId} not found`)
-        }
-    }) */
-
     it('Should throw a NotFoundError, wrong sectionId', async () => {
         expect(() => updateNote('')).to.throw(ContentError, ' is not a valid id')
         expect(() => updateNote(' \t\r')).to.throw(ContentError, ' is not a valid id')
