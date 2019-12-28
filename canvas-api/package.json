@@ -17,12 +17,12 @@
         "canvas-utils": "file:../canvas-utils",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
-        "mongoose": "^5.7.12"
+        "mongoose": "^5.7.12",
     },
     "devDependencies": {
         "chai": "^4.2.0",
         "mocha": "^6.2.2",
-        "nyc": "^14.1.1"
+        "nyc": "^15.0.0"
     },
     "keywords": [],
     "author": "Martin Garcia Blanco",
