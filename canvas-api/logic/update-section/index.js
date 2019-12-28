@@ -3,20 +3,21 @@ const { validator, errors:{ NotFoundError, ContentError, ConflictError } } = req
 
 /**
  * The function checks if exist a section
- * and delete him
+ * and update his name
  * 
  * @param {ObjectId} sectionId 
+ * @param {String} sectionName 
  */
-module.exports = function(sectionId){
+module.exports = function(sectionId, sectionName){
     if(!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
+    
+    validator.string(sectionName)
+    validator.string.notVoid(sectionName, 'sectionName')
 
     return (async () => {
         const section = await Section.findById(sectionId)
         if(!section) throw new NotFoundError(`section with id ${sectionId} not found`)
 
-        await Section.deleteOne({_id : sectionId})
-
-        const shouldNotExistSection = await Section.findById(sectionId)
-        if (shouldNotExistSection) throw new ConflictError(`DB error`)
+        await Section.updateOne({_id : sectionId}, {name: sectionName} )
     })()
 }

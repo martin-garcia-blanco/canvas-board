@@ -18,6 +18,6 @@ module.exports = function(boardId, boardName){
         const board = await Board.findById(boardId)
         if(!board) throw new NotFoundError(`board with id ${boardId} not found`)
 
-        await Board.update({_id : boardId}, {name: boardName} )
+        await Board.updateOne({_id : boardId}, {name: boardName} )
     })()
 }

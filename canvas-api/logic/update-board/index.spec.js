@@ -14,8 +14,7 @@ describe('logic updateBoard test', () => {
     beforeEach(async () =>{
         await Board.deleteMany()
         
-        await Board.create({})
-        const board = await Board.findOne()
+        const board = await Board.create({})
         boardId = board.id
     })
 

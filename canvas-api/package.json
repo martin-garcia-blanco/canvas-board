@@ -7,7 +7,8 @@
         "start": "node .",
         "debug": "node inspect .",
         "test": "npx mocha logic/**/*.spec.js",
-        "test-debug": "npx mocha inspect logic/*/*.spec.js"
+        "test-debug": "npx mocha inspect logic/*/*.spec.js",
+        "test:coverage": "npx nyc --reporter=html --reporter=text mocha logic/**/*.spec.js"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",
@@ -19,9 +20,9 @@
         "mongoose": "^5.7.12"
     },
     "devDependencies": {
-        "nyc": "^14.1.1",
+        "chai": "^4.2.0",
         "mocha": "^6.2.2",
-        "chai": "^4.2.0"
+        "nyc": "^14.1.1"
     },
     "keywords": [],
     "author": "Martin Garcia Blanco",
