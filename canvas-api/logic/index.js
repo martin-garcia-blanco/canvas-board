@@ -5,5 +5,7 @@ module.exports = {
     deleteSection: require('./delete-section'),
     updateBoard: require('./update-board'),
     updateNote: require('./update-note'),
-    createBoard: require('./create-board')
+    createBoard: require('./create-board'),
+    retrieveBoard: require('./retrieve-board'),
+    retrieveSections: require('./retrieve-sections')
 }

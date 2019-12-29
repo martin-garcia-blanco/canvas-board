@@ -3,7 +3,7 @@ const express = require('express')
 const { name, version } = require('./package.json')
 const { env: { PORT, DB_URL } } = process
 const cors = require('./utils/cors')
-const {createNote, createSection, createBoard, deleteNote, deleteSection,updateBoard, updateNote} = require('./logic')
+const {createNote, createSection, createBoard, deleteNote, deleteSection,updateBoard, updateNote, retrieveBoard, retrieveSections} = require('./logic')
 const { database } = require('canvas-data')
 const bodyparser = require('body-parser')
 const jsonBodyParser = bodyparser.json()
@@ -16,6 +16,33 @@ api.options('*', cors,(req,res)=>{
     res.end()
 })
 
+api.get('/board',  (req,res)=>{
+    try{
+        retrieveBoard()
+        .then((board) => res.json(board))
+        .catch( error => {
+            if(error instanceof NotFoundError) return res.status(404).json(error.message)
+            return res.status(500).json({error})
+        })
+    } catch({message}){
+        res.status(400).json({message})
+    }
+})
+
+api.get('/sections', jsonBodyParser, (req,res)=>{
+    const { body: {boardId} }  = req
+
+    try{
+        retrieveSections(boardId)
+        .then(sections => res.json(sections))
+        .catch( error => {
+            if(error instanceof NotFoundError) return res.status(404).json(error.message)
+            return res.status(500).json({error})
+        })
+    } catch({message}){
+        res.status(400).json({message})
+    }
+})
 
 api.post('/section', jsonBodyParser, (req,res)=>{
     const { body: {name, boardId} } = req
