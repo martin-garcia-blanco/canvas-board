@@ -21,8 +21,7 @@ api.get('/board',  (req,res)=>{
         retrieveBoard()
         .then((board) => res.json(board))
         .catch( error => {
-            if(error instanceof NotFoundError) return res.status(404).json(error.message)
-            return res.status(500).json({error})
+            return res.status(500).json(error)
         })
     } catch({message}){
         res.status(400).json({message})
