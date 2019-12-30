@@ -1,5 +1,5 @@
 const { models:{ Board } } = require('canvas-data')
-const { errors: {NotFoundError} } = require('canvas-utils')
+const { errors: {ConflictError} } = require('canvas-utils')
 
 /**
  * The function checks if exist a Board
@@ -7,8 +7,9 @@ const { errors: {NotFoundError} } = require('canvas-utils')
  */
 module.exports = function(){
     return (async() => {
-        const board = await Board.findOne()
-        if(!board) throw new NotFoundError(`board doesn't exist`)
+        let board = await Board.findOne()
+        if(!board) board = await Board.create({})
+        if(!board) throw new ConflictError('DB error')
 
         const result = {name: board.name, sections: board.sections, id: board.id}
 

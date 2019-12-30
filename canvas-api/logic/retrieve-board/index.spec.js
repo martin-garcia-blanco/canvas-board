@@ -9,11 +9,11 @@ describe('logic retrieveBoard test', () => {
 
     let boardId, name
 
-    beforeEach(async () =>{
+    beforeEach(async () => {
         await Board.deleteMany()
-        
+
         name = `name-${Math.random()}`
-        const board = await Board.create({name})
+        const board = await Board.create({ name })
         boardId = board.id
     })
 
@@ -28,24 +28,20 @@ describe('logic retrieveBoard test', () => {
         expect(board.id).to.equal(boardId)
     })
 
-    describe('when board doesnt exists', () => {
+    describe('when board doesnt exists, should create a new one', () => {
         beforeEach(async () =>
             await Board.deleteMany()
         )
 
-        it('should fail on already existing board', () =>
-            retrieveBoard()
-                .then(() => {
-                    throw Error('should not reach this point')
-                })
-                .catch(error => {
-                    expect(error).to.exist
-                    expect(error.message).to.exist
-                    expect(typeof error.message).to.equal('string')
-                    expect(error.message.length).to.be.greaterThan(0)
-                    expect(error.message).to.equal(`board doesn't exist`)
-                })
-        )
+        it('should fail on already existing board', async() => {
+            const board = await retrieveBoard()
+            const defaultName = 'New Board'
+
+            expect(board).to.exist
+            expect(board.name).to.equal(defaultName)
+            expect(board.sections).to.be.instanceOf(Array)
+            expect(board.sections.length).to.equal(0)
+        })
     })
     after(() => Board.deleteMany())
 })
