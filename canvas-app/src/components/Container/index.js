@@ -4,7 +4,7 @@ import Section from '../Section'
 
 function Container({sections}){
 
-    return <main class="main">
+    return <main className="main">
         <ul>
             {sections.map(section => <li><Section/></li>)}
         </ul>
