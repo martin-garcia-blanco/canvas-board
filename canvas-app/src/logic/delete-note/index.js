@@ -7,8 +7,10 @@ const API_URL = process.env.REACT_APP_API_URL
 /**
  * Function receives noteId send a delete request 
  * to remove the note with this id
+ * It returns nothing or an err
  * 
  * @param {ObjectId} noteId 
+ * @returns {Promise} 
  */
 export default function (noteId, sectionId) {
     if (!ObjectId.isValid(noteId)) throw new ContentError(`${noteId} is not a valid id`)

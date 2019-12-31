@@ -3,14 +3,9 @@
         display: flex
         align-content: center
         background-color:#f5cdaaed
-        margin: 1rem
         border: solid thin grey
-        width: 70vw
-        max-width: 600px
         position: absolute
         z-index: 1
-        top: 20vh
-        left: 20vw
         &__header
             padding: 1rem
             display: flex
@@ -32,3 +27,16 @@
                 color: red
 .form__button i
     color: #ff7a8a
+
+@media screen and (min-width: 600px) 
+    .new-section
+        width: 50%
+        left: 25%
+        top: 20vh
+        
+@media screen and (max-width: 599px) 
+    .new-section
+        width: 70vw
+        left: 15vw
+        bottom: 50vh
+        max-width: 400px

@@ -1,10 +1,10 @@
 import call from '../../utils/call'
 require('dotenv').config()
 const API_URL = process.env.REACT_APP_API_URL
-const { errors: { NotFoundError } } = require('canvas-utils')
 
 /**
- * Retrieve a board
+ * Ii creates a requesto to api, and return
+ * a board or an error
  * @returns {Promise} - Board.  
  */
 export default function() {

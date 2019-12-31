@@ -3,8 +3,8 @@ import './index.sass'
 
 function Feedback({ text }) {
 
-    return <section class="feedback">
-        <p class="feedback__text">{text}</p>
+    return <section className="feedback">
+        <p className="feedback__text">{text}</p>
     </section>
 }
 

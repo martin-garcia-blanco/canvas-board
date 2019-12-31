@@ -5,10 +5,13 @@ const { ObjectId } = require('canvas-data')
 const API_URL = process.env.REACT_APP_API_URL
 
 /**
- * Function receives sectionId send a delete request 
- * to remove the section with this id
+ * Function receives sectionId, noteId and 
+ * noteSubject and send an update request 
  * 
  * @param {ObjectId} sectionId 
+ * @param {ObjectId} noteId
+ * @param {String} noteSubject 
+ * @returns {Promise}
  */
 export default function (sectionId, noteId, noteSubject) {
     if(!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)

@@ -3,6 +3,7 @@ import { Route, withRouter } from 'react-router-dom'
 import Header from '../Header'
 import NewItem from '../New-Item'
 import Container from '../Container'
+import Feedback from '../Feedback'
 import {
     retrieveBoard,
     retrieveSections,
@@ -24,6 +25,8 @@ export default withRouter(function ({ history }) {
     const [render, setRender] = useState(true)
     const [sectionId, setSectionId] = useState(undefined)
     const [noteId, setNoteId] = useState(undefined)
+    const [error, setError] = useState(undefined)
+
 
     useEffect(() => {
         (async () => {
@@ -31,11 +34,12 @@ export default withRouter(function ({ history }) {
                 const _board = await retrieveBoard()
                 setBoard(_board)
                 _board && setSections(await retrieveSections(_board.id))
+                setError(undefined)
             } catch (error) {
-                console.log(error.message)
+                setError('Connection error, try again later')
             }
         })()
-    }, [setBoard, render])
+    }, [setBoard, setSections, setError, render])
 
     const handleAddSection = () => {
         setHint('New section name')
@@ -76,7 +80,7 @@ export default withRouter(function ({ history }) {
             setRender(!render)
             history.push('/')
         } catch (error) {
-            console.log(error.message)
+            setError('Error updating board name, try again later')
         }
     }
 
@@ -86,7 +90,7 @@ export default withRouter(function ({ history }) {
             setRender(!render)
             history.push('/')
         } catch (error) {
-            console.log(error.message)
+            setError('Error creating a new section, try again later')
         }
     }
 
@@ -96,30 +100,26 @@ export default withRouter(function ({ history }) {
             setRender(!render)
             history.push('/')
         } catch (error) {
-            console.log(error.message)
+            setError('Error creating a new note, try again later')
         }
     }
 
-    const  handleUpdateNote = async(sectionId, noteId, noteSubject)=>{
+    const handleUpdateNote = async (sectionId, noteId, noteSubject) => {
         try {
 
             await updateNote(sectionId, noteId, noteSubject)
             setRender(!render)
             history.push('/')
         } catch (error) {
-            console.log(error.message)
+            setError('Error updating the note, try again later')
         }
     }
 
     const handleAddNote = async (sectionId) => {
-        try {
-            setHint('Note subject')
-            setMethodSelector('NEW_NOTE')
-            setSectionId(sectionId)
-            history.push('/update')
-        } catch (error) {
-            console.log(error.message)
-        }
+        setHint('Note subject')
+        setMethodSelector('NEW_NOTE')
+        setSectionId(sectionId)
+        history.push('/update')
     }
 
     const handleDeleteSection = async (sectionId) => {
@@ -127,7 +127,7 @@ export default withRouter(function ({ history }) {
             await deleteSection(sectionId)
             setRender(!render)
         } catch (error) {
-            console.log(error.message)
+            setError('Error removing the section, try again later')
         }
     }
 
@@ -136,25 +136,22 @@ export default withRouter(function ({ history }) {
             await deleteNote(noteId, sectionId)
             setRender(!render)
         } catch (error) {
-            console.log(error.message)
+            setError('Error removing the note, try again later')
         }
     }
 
     const handleModifyNote = async (sectionId, noteId, noteSubject) => {
-        try {
-            setSectionId(sectionId)
-            setNoteId(noteId)
-            setHint(noteSubject)
-            setMethodSelector('UPDATE_NOTE')
-            history.push('/update')
-        } catch (error) {
-            console.log(error.message)
-        }
+        setSectionId(sectionId)
+        setNoteId(noteId)
+        setHint(noteSubject)
+        setMethodSelector('UPDATE_NOTE')
+        history.push('/update')
     }
 
     return <>
-        { board && <Header onAddSection={handleAddSection} onChangeBoardName={handleChangeBoardName} title={board.name} />}
+        {board && <Header onAddSection={handleAddSection} onChangeBoardName={handleChangeBoardName} title={board.name} />}
         <Route path='/update' render={() => hint && <NewItem hint={hint} onAccept={handleAccept} onReject={handleReject} />} />
-        {sections && <Container sections={sections} onAddNote={handleAddNote} onDeleteSection={handleDeleteSection} handleModifyNote={handleModifyNote} handleDeleteNote={handleDeleteNote}/>}
+        {sections && <Container sections={sections} onAddNote={handleAddNote} onDeleteSection={handleDeleteSection} handleModifyNote={handleModifyNote} handleDeleteNote={handleDeleteNote} />}
+        {error && <Feedback text={error} />}
     </>
 })
