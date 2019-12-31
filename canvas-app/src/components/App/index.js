@@ -72,7 +72,6 @@ export default withRouter(function ({ history }) {
 
     const handleUpdateBoardName = async (boardId, boardName) => {
         try {
-            debugger
             await updateBoard(boardId, boardName)
             setRender(!render)
             history.push('/')
@@ -103,7 +102,7 @@ export default withRouter(function ({ history }) {
 
     const  handleUpdateNote = async(sectionId, noteId, noteSubject)=>{
         try {
-            debugger 
+
             await updateNote(sectionId, noteId, noteSubject)
             setRender(!render)
             history.push('/')

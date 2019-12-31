@@ -3,7 +3,6 @@ import './index.sass'
 import Note from '../Note'
 
 function Section({section:{id,name,notes}, onAddNote, onDeleteSection, handleDeleteNote, handleModifyNote}) {
-    console.log(notes)
     return <section className="section">
         <header className="section__header">
             <h2>{name}</h2>

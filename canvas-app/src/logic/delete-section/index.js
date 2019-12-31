@@ -11,7 +11,6 @@ const API_URL = process.env.REACT_APP_API_URL
  * @param {ObjectId} sectionId 
  */
 export default function (sectionId) {
-    debugger
     if (!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
 
     return (async () => {

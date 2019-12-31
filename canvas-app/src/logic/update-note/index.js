@@ -11,14 +11,11 @@ const API_URL = process.env.REACT_APP_API_URL
  * @param {ObjectId} sectionId 
  */
 export default function (sectionId, noteId, noteSubject) {
-    debugger
     if(!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
     if(!ObjectId.isValid(noteId)) throw new ContentError(`${noteId} is not a valid id`)
     validator.string(noteSubject)
     validator.string.notVoid(noteSubject, 'noteSubject')
-    debugger
     return (async () => {
-        debugger
         const res = await call(`${API_URL}/note/${noteId}`, {
             method: 'PUT',
             headers: {
