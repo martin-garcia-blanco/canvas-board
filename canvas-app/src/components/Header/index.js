@@ -8,9 +8,6 @@ function Header({ title, onChangeBoardName, onAddSection }) {
             <button className="form__button" onClick={onChangeBoardName}>
                 <i className="material-icons" id="icon--white">create</i>
             </button>
-            <button className="form__button">
-                <i className="material-icons" id="icon--white">delete</i>
-            </button>
             <button className="form__button" onClick={onAddSection}>
                 <i className="material-icons" id="icon--white">add_circle</i>
             </button>

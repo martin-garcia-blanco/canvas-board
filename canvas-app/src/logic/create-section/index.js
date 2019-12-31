@@ -7,9 +7,11 @@ const API_URL = process.env.REACT_APP_API_URL
 /**
  * Function receives boardId and a newSection name
  * and send an post request to create a new section
+ * It returns nothing or an err
  * 
  * @param {ObjectId} boardId 
  * @param {String} sectionName 
+ * @returns {Promise} 
  */
 export default function (boardId, sectionName) {
     if (!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)

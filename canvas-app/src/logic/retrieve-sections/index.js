@@ -5,9 +5,12 @@ const { errors:{ ContentError } } = require('canvas-utils')
 const { ObjectId } = require ('canvas-data')
 
 /**
- * Retrieve an array of sections
+ * Function receives a boardId and 
+ * send a GET request
+ * It returns an array of sections or an err
  * @param {ObjectId} boardId 
- *  */
+ * @returns {Promise}
+ */
 export default function(boardId) {
     if (!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
     return (async() => {

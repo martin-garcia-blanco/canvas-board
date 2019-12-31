@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './index.sass'
 
 function Note({note:{id, text}, onDelete, onModify, sectionId}) {
