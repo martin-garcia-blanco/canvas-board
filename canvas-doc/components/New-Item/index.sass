@@ -1,0 +1,37 @@
+
+.new-section
+        display: flex
+        align-content: center
+        background-color:#f5cdaaed
+        margin: 1rem
+        border: solid thin grey
+        
+        width: 95%
+        max-width: 600px
+        position: absolute
+        z-index: 1
+        margin: 0 auto
+        top: 40%
+
+        &__header
+            padding: 1rem
+            display: flex
+            flex-wrap: wrap
+            justify-content: space-between
+            align-items: center
+            width: 100%
+            & textarea
+                font-size: 1.3rem
+                font-weight: 400
+                text-align: center
+                padding-top: 1rem
+                width: 70%
+            & button
+                margin: .2rem
+            & .create:hover
+                color: green
+            & .cancel:hover
+                color: red
+ 
+.form__button i
+    color: #ff7a8a
