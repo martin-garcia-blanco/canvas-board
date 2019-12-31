@@ -11,10 +11,11 @@ const { errors: {NotFoundError, ContentError} } = require('canvas-utils')
  *  
  */
 module.exports = function(boardId){
-    if(!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
+    //if(!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
 
     return (async() => {
-        const board = await Board.findById(boardId).populate({path:'sections', model: 'Section'})
+        //const board = await Board.findById(boardId).populate({path:'sections', model: 'Section'})
+        const board = await Board.findOne().populate({path:'sections', model: 'Section'})
         if(!board) throw new NotFoundError(`board with id ${boardId} not found`)
 
         let sections = []
