@@ -1,29 +1,31 @@
-const { ObjectId, models:{ Board, Section } } = require('canvas-data')
-const { validator, errors:{ NotFoundError, ContentError, ConflictError } } = require('canvas-utils')
+import call from '../../utils/call'
+require('dotenv').config()
+const { validator, errors: { ContentError } } = require('canvas-utils')
+const { ObjectId } = require('canvas-data')
+const API_URL = process.env.REACT_APP_API_URL
 
 /**
  * Function receives boardId and a newSection name
- * checks if board exist and create a new Section, linked 
- * into the board.sections
+ * and send an post request to create a new section
  * 
  * @param {ObjectId} boardId 
  * @param {String} sectionName 
  */
-module.exports = function(boardId, sectionName){
-    if(!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
+export default function (boardId, sectionName) {
+    if (!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
     validator.string(sectionName)
     validator.string.notVoid(sectionName, 'sectionName')
 
     return (async () => {
-        const board = await Board.findById(boardId)
-        if(!board) throw new NotFoundError(`board with id ${boardId} not found`)
+        const res = await call(`${API_URL}/section`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: sectionName, boardId })
+        })
 
-        const section = await Section.create({ name: sectionName, notes: [] })
-        board.sections.push(section.id)
-        await board.save()
-
-        if(!board.sections.length) throw new ConflictError('DB error')
-
-        return section.id
+        if (res.status === 201) return
+        throw new Error(JSON.parse(res.body))
     })()
 }

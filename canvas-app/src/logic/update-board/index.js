@@ -1,23 +1,33 @@
-const { ObjectId, models:{ Board } } = require('canvas-data')
-const { validator, errors:{ NotFoundError, ContentError, ConflictError } } = require('canvas-utils')
+import call from '../../utils/call'
+require('dotenv').config()
+const { validator, errors: { ContentError } } = require('canvas-utils')
+const { ObjectId } = require('canvas-data')
+const API_URL = process.env.REACT_APP_API_URL
 
 /**
- * The function checks if exist a board
- * and update his name
+ * Function receives boardId send a delete request 
+ * to remove the section with this id
  * 
  * @param {ObjectId} boardId 
- * @param {String} boardName 
+ * @param {String} boardName
  */
-module.exports = function(boardId, boardName){
+export default function (boardId, boardName) {
+    debugger
     if(!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
-    
     validator.string(boardName)
     validator.string.notVoid(boardName, 'boardName')
-
+    debugger
     return (async () => {
-        const board = await Board.findById(boardId)
-        if(!board) throw new NotFoundError(`board with id ${boardId} not found`)
+        debugger
+        const res = await call(`${API_URL}/board/${boardId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({boardName})
+        })
 
-        await Board.updateOne({_id : boardId}, {name: boardName} )
+        if (res.status === 204) return
+        throw new Error(JSON.parse(res.body))
     })()
 }

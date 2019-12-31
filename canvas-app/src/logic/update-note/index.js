@@ -1,27 +1,33 @@
-const { ObjectId, models:{ Section } } = require('canvas-data')
-const { validator, errors:{ NotFoundError, ContentError } } = require('canvas-utils')
+import call from '../../utils/call'
+require('dotenv').config()
+const { validator, errors: { ContentError } } = require('canvas-utils')
+const { ObjectId } = require('canvas-data')
+const API_URL = process.env.REACT_APP_API_URL
 
 /**
- * The function checks if exist a section and a note
- * and update the note name
+ * Function receives sectionId send a delete request 
+ * to remove the section with this id
  * 
  * @param {ObjectId} sectionId 
- * @param {ObjectId} noteId 
- * @param {String} noteName 
  */
-module.exports = function(sectionId, noteId, noteName){
+export default function (sectionId, noteId, noteSubject) {
+    debugger
     if(!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
     if(!ObjectId.isValid(noteId)) throw new ContentError(`${noteId} is not a valid id`)
-    validator.string(noteName)
-    validator.string.notVoid(noteName, 'noteName')
-
+    validator.string(noteSubject)
+    validator.string.notVoid(noteSubject, 'noteSubject')
+    debugger
     return (async () => {
-        const section = await Section.findById(sectionId)
-        if(!section) throw new NotFoundError(`section with id ${sectionId} not found`)
-
-        section.notes.forEach(note =>{
-            if(note.id === noteId) note.text = noteName
+        debugger
+        const res = await call(`${API_URL}/note/${noteId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({noteSubject, sectionId})
         })
-        await section.save()
+
+        if (res.status === 204) return
+        throw new Error(JSON.parse(res.body))
     })()
 }

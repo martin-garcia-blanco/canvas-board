@@ -14,7 +14,7 @@ export default function() {
         })
 
         if (res.status === 200) return JSON.parse(res.body)
-        if (res.status === 404) throw new NotFoundError(JSON.parse(res.body))
+        
         throw new Error(JSON.parse(res.body))
     })()
 }

@@ -1,28 +1,26 @@
-const { ObjectId, models:{ Board, Section } } = require('canvas-data')
-const { errors: {NotFoundError, ContentError} } = require('canvas-utils')
+import call from '../../utils/call'
+require('dotenv').config()
+const API_URL = process.env.REACT_APP_API_URL
+const { errors:{ ContentError } } = require('canvas-utils')
+const { ObjectId } = require ('canvas-data')
 
 /**
- * The function checks if exist a Border
- * If not exists throw a new NotFOundError,
- * If exists returns an array of sections with notes
- * 
- * @param {ObjectId} boardId
- * @returns {[Section]} 
- *  
- */
-module.exports = function(boardId){
-    if(!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
-
+ * Retrieve an array of sections
+ * @param {ObjectId} boardId 
+ *  */
+export default function(boardId) {
+    if (!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
     return (async() => {
-        const board = await Board.findById(boardId).populate({path:'sections', model: 'Section'})
-        if(!board) throw new NotFoundError(`board with id ${boardId} not found`)
-
-        let sections = []
-        sections = board.sections.map(section=>{
-            const notes = section.notes.map(note => {return {id: note.id, text:note.text, creationDate: note.creationDate}})
-            return {id: section.id, name: section.name, notes}
+        const res = await call(`${API_URL}/sections`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ boardId })
         })
 
-        return sections
+        if (res.status === 200) return JSON.parse(res.body)
+        
+        throw new Error(JSON.parse(res.body))
     })()
 }

@@ -2,21 +2,19 @@ import React from 'react'
 import './index.sass'
 import Note from '../Note'
 
-function Section({notes}) {
-
-    return <section class="section">
-        <header class="section__header">
-            <h2>CUSTOMER SEGMENTS</h2>
-            <i class="material-icons">remove_circle</i>
+function Section({section:{id,name,notes}, onAddNote, onDeleteSection, handleDeleteNote, handleModifyNote}) {
+    console.log(notes)
+    return <section className="section">
+        <header className="section__header">
+            <h2>{name}</h2>
+            <button className="form__button" onClick={()=> onDeleteSection(id)}><i className="material-icons">remove_circle</i></button>
         </header>
-        <ul class="section__list notes">
-            {notes && notes.map(note => <li><Note/></li>)}
-        </ul>
-        <form class="section__form form">
-            <button class="form__button">
-                <i class="material-icons">add_circle</i>
+        <ul className="section__list notes">
+        {notes && notes.map((note, index) => <li key={index}><Note note={note} sectionId={id} onDelete={handleDeleteNote} onModify={handleModifyNote}/></li>)}
+        </ul>   
+            <button className="form__button" onClick={()=>onAddNote(id)}>
+                <i className="material-icons">add_circle</i>
             </button>
-        </form>
     </section>
 }
 

@@ -1,22 +1,28 @@
-const { ObjectId, models:{ Section } } = require('canvas-data')
-const { validator, errors:{ NotFoundError, ContentError, ConflictError } } = require('canvas-utils')
+import call from '../../utils/call'
+require('dotenv').config()
+const { errors: { ContentError } } = require('canvas-utils')
+const { ObjectId } = require('canvas-data')
+const API_URL = process.env.REACT_APP_API_URL
 
 /**
- * The function checks if exist a section
- * and delete him
+ * Function receives sectionId send a delete request 
+ * to remove the section with this id
  * 
  * @param {ObjectId} sectionId 
  */
-module.exports = function(sectionId){
-    if(!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
+export default function (sectionId) {
+    debugger
+    if (!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
 
     return (async () => {
-        const section = await Section.findById(sectionId)
-        if(!section) throw new NotFoundError(`section with id ${sectionId} not found`)
+        const res = await call(`${API_URL}/section/${sectionId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
 
-        await Section.deleteOne({_id : sectionId})
-
-        const shouldNotExistSection = await Section.findById(sectionId)
-        if (shouldNotExistSection) throw new ConflictError(`DB error`)
+        if (res.status === 204) return
+        throw new Error(JSON.parse(res.body))
     })()
 }

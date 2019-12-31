@@ -1,14 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './index.sass'
 
-function Note() {
-
-    return <div class="note">
-        <form class="note__form note-form">
-            <button class="note-form__modify"><i class="material-icons">create</i></button>
-            <button class="note-form__delete"><i class="material-icons">delete</i></button>
-            <textarea class="note-form__text" type="text">textarea textarea textarea textareas</textarea>
-        </form>
+function Note({note:{id, text}, onDelete, onModify, sectionId}) {
+return <div className="note">
+        <div className="note__form note-form">
+            <button className="note-form__modify" onClick={()=> onModify(sectionId, id, text)}><i className="material-icons">create</i></button>
+            <button className="note-form__delete" onClick={()=> onDelete(id,sectionId, )}><i className="material-icons">delete</i></button>
+            <textarea className="note-form__text" type="text" value={text} disabled></textarea>
+        </div>
     </div>
 }
 

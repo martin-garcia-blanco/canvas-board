@@ -1,30 +1,31 @@
-const { ObjectId, models:{ Note, Section } } = require('canvas-data')
-const { validator, errors:{ NotFoundError, ContentError, ConflictError } } = require('canvas-utils')
+import call from '../../utils/call'
+require('dotenv').config()
+const { validator, errors:{ ContentError } } = require('canvas-utils')
+const { ObjectId } = require ('canvas-data')
+const API_URL = process.env.REACT_APP_API_URL
 
 /**
- * The function checks if exist a section
- * create a new embedded note, with the noteSubject
- *  as text
+ * Function receives sectionId and a newSection name
+ * and send an post request to create a new section
  * 
  * @param {ObjectId} sectionId 
- * @param {String} noteSubject 
+ * @param {String} NoteSubject 
  */
-module.exports = function(sectionId, noteSubject){
-    if(!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
-    
-    validator.string(noteSubject)
-    validator.string.notVoid(noteSubject, 'noteSubject')
+export default function (sectionId, NoteSubject) {
+    if (!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
+    validator.string(NoteSubject)
+    validator.string.notVoid(NoteSubject, 'NoteSubject')
 
-    return (async () => {
-        const section = await Section.findById(sectionId)
-        if(!section) throw new NotFoundError(`board with id ${sectionId} not found`)
+        return (async () => {
+            const res = await call(`${API_URL}/note`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: NoteSubject, sectionId })
+            })
 
-        const note = new Note({ text: noteSubject, creationDate: new Date })
-        section.notes.push(note)
-        await section.save()
-
-        if(!section.notes.length) throw new ConflictError('DB error')
-
-        return note.id
-    })()
+            if (res.status === 201) return
+            throw new Error(JSON.parse(res.body))
+        })()
 }
