@@ -13,7 +13,7 @@ export default function() {
             method: 'post',
         })
 
-        if (res.status === 201) return JSON.parse(res.body)
+        if (res.status === 201) return 
         throw new Error(JSON.parse('Error on board creation'))
     })()
 }

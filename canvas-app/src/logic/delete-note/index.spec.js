@@ -1,13 +1,12 @@
 require('dotenv').config()
-const { env: { TEST_DB_URL } } = process
-const { expect } = require('chai')
-const deleteNote = require('.')
+const { env: { REACT_APP_TEST_DB_URL: TEST_DB_URL } } = process
+const {deleteNote} = require('../index')
 const { database, ObjectId, models: { Section, Note } } = require('canvas-data')
-const { errors: { ContentError } } = require('canvas-utils')
+const { errors:{ContentError} } = require('canvas-utils')
 
 
 describe('logic deleteNote test', () => {
-    before(() => database.connect(TEST_DB_URL))
+    beforeAll(() => database.connect(TEST_DB_URL))
 
     let sectionId, noteId
 
@@ -27,12 +26,13 @@ describe('logic deleteNote test', () => {
     })
 
     it('There is a note so should delete it', async () => {
-        await deleteNote(sectionId, noteId)
+        debugger
+        await deleteNote(noteId, sectionId)
 
         const section = await Section.findById(sectionId)
         const note = section.notes[0]
 
-        expect(note).not.to.exist
+        expect(note).not.toBeDefined()
     })
 
     it('Should throw and error, unexpected sectionId', async () => {
@@ -42,23 +42,23 @@ describe('logic deleteNote test', () => {
             await deleteNote(fakeId, fakeId)
             throw new Error('Should not reach this point')
         } catch (error) {
-            expect(error).to.exist
-            expect(error.message).to.exist
-            expect(typeof error.message).to.equal('string')
-            expect(error.message.length).to.be.greaterThan(0)
-            expect(error.message).to.equal(`section with id ${fakeId} not found`)
+            expect(error).toBeDefined()
+            expect(error.message).toBeDefined()
+            expect(typeof error.message).toBe('string')
+            expect(error.message.length).toBeGreaterThan(0)
+            expect(error.message).toBe(`section with id ${fakeId} not found`)
         }
     })
 
     it('Should throw a NotFoundError, wrong sectionId', async () => {
-        expect(() => deleteNote('')).to.throw(ContentError, ' is not a valid id')
-        expect(() => deleteNote(' \t\r')).to.throw(ContentError, ' is not a valid id')
+        expect(() => deleteNote('')).toThrow(ContentError, ' is not a valid id')
+        expect(() => deleteNote(' \t\r')).toThrow(ContentError, ' is not a valid id')
     })
 
     it('Should throw a NotFoundError, wrong noteId', async () => {
-        expect(() => deleteNote('')).to.throw(ContentError, ' is not a valid id')
-        expect(() => deleteNote(' \t\r')).to.throw(ContentError, ' is not a valid id')
+        expect(() => deleteNote('')).toThrow(ContentError, ' is not a valid id')
+        expect(() => deleteNote(' \t\r')).toThrow(ContentError, ' is not a valid id')
     })
 
-    after(() => Section.deleteMany())
+    afterAll(() => Section.deleteMany())
 })

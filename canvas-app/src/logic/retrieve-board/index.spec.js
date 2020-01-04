@@ -1,11 +1,11 @@
 require('dotenv').config()
-const { env: { TEST_DB_URL } } = process
-const { expect } = require('chai')
-const retrieveBoard = require('.')
+const { env: { REACT_APP_TEST_DB_URL: TEST_DB_URL } } = process
+const {retrieveBoard} = require('../index')
 const { database, models: { Board } } = require('canvas-data')
 
+
 describe('logic retrieveBoard test', () => {
-    before(() => database.connect(TEST_DB_URL))
+    beforeAll(() => database.connect(TEST_DB_URL))
 
     let boardId, name
 
@@ -21,11 +21,11 @@ describe('logic retrieveBoard test', () => {
         await retrieveBoard()
 
         const board = await Board.findOne()
-        expect(board).to.exist
-        expect(board.name).to.equal(name)
-        expect(board.sections).to.be.instanceOf(Array)
-        expect(board.sections.length).to.equal(0)
-        expect(board.id).to.equal(boardId)
+        expect(board).toBeDefined()
+        expect(board.name).toBe(name)
+        expect(board.sections).toBeInstanceOf(Array)
+        expect(board.sections.length).toBe(0)
+        expect(board.id).toBe(boardId)
     })
 
     describe('when board doesnt exists', () => {
@@ -33,19 +33,14 @@ describe('logic retrieveBoard test', () => {
             await Board.deleteMany()
         )
 
-        it('should fail on already existing board', () =>
+        it('should success, the method creates it if it doesnt exist', async() =>{
+            const unexpectedBoard = await Board.findOne()
+            expect(unexpectedBoard).toBe(null)
+
             retrieveBoard()
-                .then(() => {
-                    throw Error('should not reach this point')
-                })
-                .catch(error => {
-                    expect(error).to.exist
-                    expect(error.message).to.exist
-                    expect(typeof error.message).to.equal('string')
-                    expect(error.message.length).to.be.greaterThan(0)
-                    expect(error.message).to.equal(`board doesn't exist`)
-                })
-        )
+            const board = await Board.findOne()
+            expect(board).toBeDefined()
+        })
     })
-    after(() => Board.deleteMany())
+    afterAll(() => Board.deleteMany())
 })
