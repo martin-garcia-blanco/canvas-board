@@ -40,9 +40,13 @@ Canvas-Board is a demo inpired into trello.com or  https://www.business-model-ca
 
 ![Alt Data model](./canvas-doc/images/data-model.png)
 
-**CODE COVERAGE**
+**API CODE COVERAGE (Mocha/Chai)**
 
 ![Alt Api coverage](./canvas-doc/images/api-coverage.png)
+
+**React-App CODE COVERAGE (Jest)**
+
+![Alt Api coverage](./canvas-doc/images/react-logic.png)
 
 
 

@@ -7,6 +7,7 @@ import deleteSection from './delete-section'
 import deleteNote from './delete-note'
 import updateNote from './update-note'
 import updateBoard from './update-board'
+import updateSection from './update-section'
 
 export{
     retrieveBoard,
@@ -17,5 +18,6 @@ export{
     deleteSection,
     deleteNote,
     updateNote,
-    updateBoard
+    updateBoard,
+    updateSection
 }

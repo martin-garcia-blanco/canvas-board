@@ -1,13 +1,12 @@
 require('dotenv').config()
-const { env: { TEST_DB_URL } } = process
-const { expect } = require('chai')
-const updateNote = require('.')
+const { env: { REACT_APP_TEST_DB_URL: TEST_DB_URL } } = process
+const {updateNote} = require('../index')
 const { database, ObjectId, models: { Section, Note } } = require('canvas-data')
-const { errors: { ContentError } } = require('canvas-utils')
+const { errors:{ContentError} } = require('canvas-utils')
 
 
 describe('logic updateNote test', () => {
-    before(() => database.connect(TEST_DB_URL))
+    beforeAll(() => database.connect(TEST_DB_URL))
 
     let sectionId, noteId
 
@@ -33,8 +32,8 @@ describe('logic updateNote test', () => {
         const section = await Section.findById(sectionId)
         const note = section.notes[0]
 
-        expect(note).to.exist
-        expect(note.text).to.equal(newNoteText)
+        expect(note).toBeDefined()
+        expect(note.text).toBe(newNoteText)
     })
 
     it('Should throw and error, unexpected sectionId', async () => {
@@ -45,34 +44,34 @@ describe('logic updateNote test', () => {
             await updateNote(fakeId, fakeId, fakeName)
             throw new Error('Should not reach this point')
         } catch (error) {
-            expect(error).to.exist
-            expect(error.message).to.exist
-            expect(typeof error.message).to.equal('string')
-            expect(error.message.length).to.be.greaterThan(0)
-            expect(error.message).to.equal(`section with id ${fakeId} not found`)
+            expect(error).toBeDefined()
+            expect(error.message).toBeDefined()
+            expect(typeof error.message).toBe('string')
+            expect(error.message.length).toBeGreaterThan(0)
+            expect(error.message).toBe(`section with id ${fakeId} not found`)
         }
     })
 
     it('Should throw a NotFoundError, wrong sectionId', async () => {
-        expect(() => updateNote('')).to.throw(ContentError, ' is not a valid id')
-        expect(() => updateNote(' \t\r')).to.throw(ContentError, ' is not a valid id')
+        expect(() => updateNote('')).toThrow(ContentError, ' is not a valid id')
+        expect(() => updateNote(' \t\r')).toThrow(ContentError, ' is not a valid id')
     })
 
     it('Should throw a NotFoundError, wrong noteId', async () => {
-        expect(() => updateNote('')).to.throw(ContentError, ' is not a valid id')
-        expect(() => updateNote(' \t\r')).to.throw(ContentError, ' is not a valid id')
+        expect(() => updateNote('')).toThrow(ContentError, ' is not a valid id')
+        expect(() => updateNote(' \t\r')).toThrow(ContentError, ' is not a valid id')
     })
 
     it('Should throw a ContentError, wrong text type or empty', async () => {
-        expect(() => updateNote(sectionId, noteId, 1)).to.throw(ContentError, '1 is not a string')
-        expect(() => updateNote(sectionId, noteId, true)).to.throw(ContentError, 'true is not a string')
-        expect(() => updateNote(sectionId, noteId, [])).to.throw(ContentError, ' is not a string')
-        expect(() => updateNote(sectionId, noteId, {})).to.throw(ContentError, '[object Object] is not a string')
-        expect(() => updateNote(sectionId, noteId, undefined)).to.throw(ContentError, 'undefined is not a string')
-        expect(() => updateNote(sectionId, noteId, null)).to.throw(ContentError, 'null is not a string')
-        expect(() => updateNote(sectionId, noteId, '')).to.throw(ContentError, ' is empty or blank')
-        expect(() => updateNote(sectionId, noteId, ' \t\r')).to.throw(ContentError, ' is empty or blank')
+        expect(() => updateNote(sectionId, noteId, 1)).toThrow(ContentError, '1 is not a string')
+        expect(() => updateNote(sectionId, noteId, true)).toThrow(ContentError, 'true is not a string')
+        expect(() => updateNote(sectionId, noteId, [])).toThrow(ContentError, ' is not a string')
+        expect(() => updateNote(sectionId, noteId, {})).toThrow(ContentError, '[object Object] is not a string')
+        expect(() => updateNote(sectionId, noteId, undefined)).toThrow(ContentError, 'undefined is not a string')
+        expect(() => updateNote(sectionId, noteId, null)).toThrow(ContentError, 'null is not a string')
+        expect(() => updateNote(sectionId, noteId, '')).toThrow(ContentError, ' is empty or blank')
+        expect(() => updateNote(sectionId, noteId, ' \t\r')).toThrow(ContentError, ' is empty or blank')
     })
 
-    after(() => Section.deleteMany())
+    afterAll(() => Section.deleteMany())
 })
