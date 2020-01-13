@@ -1,0 +1,59 @@
+.register {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.register__h2 {
+  font-size: 3rem;
+  margin: 1rem 0 0 0;
+}
+.register .form {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+}
+.register .form .input {
+  border: solid 2.5px black;
+  border-radius: 5px;
+  height: 1.5rem;
+  padding: 0.2rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+.register .form > * {
+  margin-top: 1rem;
+}
+.register .form div {
+  display: flex;
+  justify-content: space-around;
+}
+.register .form div .button {
+  border: solid 2.5px black;
+  border-radius: 5px;
+  padding: 0.4rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+@media screen and (min-width: 600px) {
+  .register > .form {
+    width: 400px;
+  }
+}
+@media screen and (max-width: 599px) {
+  .register > .form {
+    width: 95vw;
+    max-width: 400px;
+  }
+}
+button, input {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+/*# sourceMappingURL=index.css.map */
