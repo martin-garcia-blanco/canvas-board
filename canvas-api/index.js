@@ -18,20 +18,21 @@ api.options('*', cors,(req,res)=>{
     res.end()
 })
 
-api.get('/board',  (req,res)=>{
+api.get('/board/:boardId',  (req,res)=>{
+    const { params: { boardId } } = req
     try{
-        retrieveBoard()
+        retrieveBoard(boardId)
         .then((board) => res.json(board))
         .catch( error => {
             return res.status(500).json(error)
         })
-    } catch({message}){
-        res.status(400).json({message})
+    } catch(error){
+        res.status(400).json(error.message)
     }
 })
 
-api.get('/sections', jsonBodyParser, (req,res)=>{
-    const { body: {boardId} }  = req
+api.get('/sections/:boardId', (req,res)=>{
+    const { params: { boardId } }  = req
 
     try{
         retrieveSections(boardId)
@@ -40,8 +41,8 @@ api.get('/sections', jsonBodyParser, (req,res)=>{
             if(error instanceof NotFoundError) return res.status(404).json(error.message)
             return res.status(500).json({error})
         })
-    } catch({message}){
-        res.status(400).json({message})
+    } catch(error){
+        res.status(400).json(error.message)
     }
 })
 
@@ -52,10 +53,10 @@ api.post('/section', jsonBodyParser, (req,res)=>{
         createSection(boardId, name)
         .then(() => res.status(201).end())
         .catch( error => {
-            return res.status(500).json({error})
+            return res.status(500).json(error.message)
         })
-    } catch({message}){
-        res.status(400).json({message})
+    } catch(error){
+        res.status(400).json(error.message)
     }
 })
 
@@ -64,10 +65,10 @@ api.post('/board', (req,res)=>{
         createBoard()
         .then(() => res.status(201).end())
         .catch( error => {
-            return res.status(500).json({error})
+            return res.status(500).json(error.message)
         })
-    } catch({message}){
-        res.status(400).json({message})
+    } catch(error){
+        res.status(400).json(error.message)
     }
 })
 
@@ -96,8 +97,8 @@ api.post('/note', jsonBodyParser,(req,res)=>{
         .catch( error => {
             return res.status(500).json({error})
         })
-    } catch({message}){
-        res.status(400).json(message)
+    } catch(error){
+        res.status(400).json(error.message)
     }
 })
 
@@ -108,12 +109,12 @@ api.put('/note/:noteId', jsonBodyParser, (req,res) => {
         updateNote(sectionId, noteId, noteSubject)
         .then(() => res.status(204).end())
         .catch(error => {
-            if (error instanceof NotFoundError) return res.status(404).json({ message: error.message })
-            if (error instanceof ConflictError) return res.status(409).json({ message: error.message })
+            if (error instanceof NotFoundError) return res.status(404).json( error.message )
+            if (error instanceof ConflictError) return res.status(409).json( error.message )
             res.status(500).json(error.message)
         })
-    } catch({error}){
-        res.status(400).json(message)
+    } catch(error){
+        res.status(400).json(error.message)
     }
 })
 
