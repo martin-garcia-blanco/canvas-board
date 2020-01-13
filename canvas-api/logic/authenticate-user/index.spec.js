@@ -27,12 +27,10 @@ describe('logic - authenticateUser', ()=>{
     })
 
     it('should succeed on correct authetication', async()=>{
-        debugger
         const _userId = await authenticateUser(email, password)
         expect(_userId).to.equal(userId)
 
         user = await User.findById(_userId)
-        debugger
         const valid = await bcrypt.compare(password, user.password)
         expect(user).to.exist
         expect(user.name).to.equal(name)
@@ -45,7 +43,6 @@ describe('logic - authenticateUser', ()=>{
         beforeEach(async() => {User.deleteMany()
             const board = new Board()
             await User.create({name, email, password, board: board.id})
-            const a= 3
         })
 
         it('wrong email', async()=>{
@@ -56,7 +53,6 @@ describe('logic - authenticateUser', ()=>{
             } catch(error){
                 expect(error).to.exist
                 expect(error).to.be.an.instanceOf(CredentialsError)
-
                 const { message } = error
                 expect(message).to.equal(`wrong credentials`)
             }
@@ -71,7 +67,6 @@ describe('logic - authenticateUser', ()=>{
             } catch(error){
                 expect(error).to.exist
                 expect(error).to.be.an.instanceOf(CredentialsError)
-
                 const { message } = error
                 expect(message).to.equal(`wrong credentials`)
             }
