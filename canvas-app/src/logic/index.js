@@ -8,6 +8,8 @@ import deleteNote from './delete-note'
 import updateNote from './update-note'
 import updateBoard from './update-board'
 import updateSection from './update-section'
+import register from './register'
+import authentication from './authentication'
 
 export{
     retrieveBoard,
@@ -19,5 +21,7 @@ export{
     deleteNote,
     updateNote,
     updateBoard,
-    updateSection
+    updateSection,
+    register,
+    authentication
 }

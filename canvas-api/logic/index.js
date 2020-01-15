@@ -7,5 +7,7 @@ module.exports = {
     updateNote: require('./update-note'),
     createBoard: require('./create-board'),
     retrieveBoard: require('./retrieve-board'),
-    retrieveSections: require('./retrieve-sections')
+    retrieveSections: require('./retrieve-sections'),
+    register: require('./register-user'),
+    authentication: require('./authenticate-user')
 }

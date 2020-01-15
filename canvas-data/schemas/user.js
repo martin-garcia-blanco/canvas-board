@@ -17,7 +17,7 @@ module.exports = new Schema({
     },
     board: {
         required: true,
-        type: ObjectId,
+        type: [ObjectId],
         ref: 'Board'
     }
 })

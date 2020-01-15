@@ -1,15 +1,15 @@
 require('dotenv').config()
 const express = require('express')
 const { name, version } = require('./package.json')
-const { env: { PORT, DB_URL } } = process
+const { env: { PORT, DB_URL, SECRET } } = process
 const cors = require('./utils/cors')
-const {createNote, createSection, createBoard, deleteNote, deleteSection,updateBoard, updateNote, retrieveBoard, retrieveSections} = require('./logic')
+const {createNote, createSection, createBoard, register, authentication, deleteNote, deleteSection,updateBoard, updateNote, retrieveBoard, retrieveSections} = require('./logic')
 const { database } = require('canvas-data')
-const { errors: { NotFoundError, ConflictError } } = require('canvas-utils')
-
+const { errors: { NotFoundError, ConflictError, CredentialsError } } = require('canvas-utils')
+const tokenVerifier = require('./helpers/token-verifier')(SECRET)
 const bodyparser = require('body-parser')
 const jsonBodyParser = bodyparser.json()
-
+const jwt = require('jsonwebtoken')
 const api = express()
 
 api.use(cors)
@@ -18,10 +18,10 @@ api.options('*', cors,(req,res)=>{
     res.end()
 })
 
-api.get('/board/:boardId',  (req,res)=>{
-    const { params: { boardId } } = req
+api.get('/board', tokenVerifier, (req,res)=>{
+    const { id } = req
     try{
-        retrieveBoard(boardId)
+        retrieveBoard(id)
         .then((board) => res.json(board))
         .catch( error => {
             return res.status(500).json(error)
@@ -31,7 +31,8 @@ api.get('/board/:boardId',  (req,res)=>{
     }
 })
 
-api.get('/sections/:boardId', (req,res)=>{
+api.get('/sections/:boardId', tokenVerifier, jsonBodyParser, (req,res)=>{
+    debugger
     const { params: { boardId } }  = req
 
     try{
@@ -46,7 +47,7 @@ api.get('/sections/:boardId', (req,res)=>{
     }
 })
 
-api.post('/section', jsonBodyParser, (req,res)=>{
+api.post('/section', jsonBodyParser, tokenVerifier, (req,res)=>{
     const { body: {name, boardId} } = req
 
     try{
@@ -72,7 +73,7 @@ api.post('/board', (req,res)=>{
     }
 })
 
-api.delete('/section/:id', (req,res)=>{
+api.delete('/section/:id', tokenVerifier, (req,res)=>{
     const { params: { id }} = req
 
     try {
@@ -88,7 +89,7 @@ api.delete('/section/:id', (req,res)=>{
     }
 })
 
-api.post('/note', jsonBodyParser,(req,res)=>{
+api.post('/note', jsonBodyParser, tokenVerifier, (req,res)=>{
     const { body: { text, sectionId } } = req
 
     try{
@@ -102,7 +103,7 @@ api.post('/note', jsonBodyParser,(req,res)=>{
     }
 })
 
-api.put('/note/:noteId', jsonBodyParser, (req,res) => {
+api.put('/note/:noteId', jsonBodyParser, tokenVerifier,  (req,res) => {
     const { params: { noteId }, body: { noteSubject, sectionId } } = req
     debugger
     try{
@@ -118,7 +119,7 @@ api.put('/note/:noteId', jsonBodyParser, (req,res) => {
     }
 })
 
-api.delete('/note/:id', jsonBodyParser, (req,res)=>{
+api.delete('/note/:id', jsonBodyParser, tokenVerifier, (req,res)=>{
     const { params: { id }, body: { sectionId }} = req
 
     try {
@@ -134,7 +135,7 @@ api.delete('/note/:id', jsonBodyParser, (req,res)=>{
     }
 })
 
-api.patch('/board/:boardId', jsonBodyParser, (req,res)=>{
+api.patch('/board/:boardId', jsonBodyParser, tokenVerifier, (req,res)=>{
     const { params: { boardId }, body: { boardName }} = req
     debugger
     try {
@@ -146,7 +147,49 @@ api.patch('/board/:boardId', jsonBodyParser, (req,res)=>{
             res.status(500).end()
         })
     } catch(error){
-        res.status(400).json({message})
+        res.status(400).json(message)
+    }
+})
+
+api.post('/', jsonBodyParser, (req,res) => {
+    try{
+        const { body: {name, email, password} } = req
+        
+        register(name, email, password)
+        .then(() => res.status(201).end())
+        .catch(error => {
+            const { message } = error
+
+            if(error instanceof ConflictError) 
+                return res.status(409).json(message)
+            res.status(500).json(message)
+        })
+    } catch(error){
+        res.status(400).json(error.message)
+    }
+})
+
+api.post('/auth', jsonBodyParser, (req, res) => {
+    
+    const { body: { email, password } } = req
+
+    try {
+        authentication(email, password)
+            .then(id => {
+                const token = jwt.sign({ sub: id }, SECRET, { expiresIn: '1d' })
+
+                res.json({ token })
+            })
+            .catch(error => {
+                const { message } = error
+
+                if (error instanceof CredentialsError)
+                    return res.status(401).json( message )
+
+                res.status(500).json( message )
+            })
+    } catch ({ message }) {
+        res.status(400).json( message )
     }
 })
 

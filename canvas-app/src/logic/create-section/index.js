@@ -13,16 +13,19 @@ const API_URL = process.env.REACT_APP_API_URL
  * @param {String} sectionName 
  * @returns {Promise} 
  */
-export default function (boardId, sectionName) {
+export default function (boardId, sectionName, token) {
     if (!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
     validator.string(sectionName)
     validator.string.notVoid(sectionName, 'sectionName')
+    validator.string(token)
+    validator.string.notVoid(token, 'token')
 
     return (async () => {
         const res = await call(`${API_URL}/section`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({ name: sectionName, boardId })
         })

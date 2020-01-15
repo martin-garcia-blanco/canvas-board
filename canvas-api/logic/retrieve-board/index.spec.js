@@ -3,13 +3,13 @@ const { env: { TEST_DB_URL } } = process
 const { expect } = require('chai')
 const { random } = Math
 const retrieveBoard = require('.')
-const { database, ObjectId, models: { Board } } = require('canvas-data')
+const { database, ObjectId, models: { Board, User } } = require('canvas-data')
 const {errors: {NotFoundError, ContentError}} = require('canvas-utils') 
 
 describe('logic retrieveBoard test', () => {
     before(() => database.connect(TEST_DB_URL))
 
-    let boardId, name
+    let boardId, name, userId
 
     beforeEach(async () => {
         await Board.deleteMany()
@@ -17,10 +17,17 @@ describe('logic retrieveBoard test', () => {
         name = `name-${Math.random()}`
         const board = await Board.create({ name })
         boardId = board.id
+
+        const userName = `userName-${random()}`
+        const password = `password-${random()}`
+        const email = `email${random()}@saf.com`
+
+        const user = await User.create({name: userName, password, email, board: [boardId]})
+        userId = user.id
     })
 
     it('should return a board', async () => {
-        const board = await retrieveBoard(boardId)
+        const board = await retrieveBoard(userId)
 
         expect(board).to.exist
         expect(board.name).to.equal(name)
@@ -38,7 +45,7 @@ describe('logic retrieveBoard test', () => {
             expect(error).to.exist
             expect(error).to.be.an.instanceOf(NotFoundError)
             const { message } = error
-            expect(message).to.equal(`board with id ${fakeId} not found`)
+            expect(message).to.equal(`user with id ${fakeId} not found`)
         }
     })
     

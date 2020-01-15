@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Route, withRouter } from 'react-router-dom'
+import { Route, withRouter, Redirect } from 'react-router-dom'
 import Header from '../Header'
 import NewItem from '../New-Item'
 import Container from '../Container'
 import Feedback from '../Feedback'
+import Login from '../Login'
+import Register from '../Register'
 import {
     retrieveBoard,
     retrieveSections,
@@ -12,7 +14,10 @@ import {
     deleteSection,
     deleteNote,
     updateNote,
-    updateBoard
+    updateBoard,
+    authentication,
+    register,
+    
 } from '../../logic'
 import './index.sass'
 
@@ -26,15 +31,19 @@ export default withRouter(function ({ history }) {
     const [sectionId, setSectionId] = useState(undefined)
     const [noteId, setNoteId] = useState(undefined)
     const [error, setError] = useState(undefined)
-
+    const { token } = sessionStorage
 
     useEffect(() => {
         (async () => {
             try {
-                const _board = await retrieveBoard()
-                setBoard(_board)
-                _board && setSections(await retrieveSections(_board.id))
-                setError(undefined)
+                if (token) {
+                    debugger
+                    const board = await retrieveBoard(token)
+                    sessionStorage.boardId = board.id
+                    board && setSections(await retrieveSections(board.id, token))
+                    setBoard(board)
+                    setError(undefined)
+                }
             } catch (error) {
                 setError('Connection error, try again later')
             }
@@ -76,7 +85,7 @@ export default withRouter(function ({ history }) {
 
     const handleUpdateBoardName = async (boardId, boardName) => {
         try {
-            await updateBoard(boardId, boardName)
+            await updateBoard(boardId, boardName, token)
             setRender(!render)
             history.push('/')
         } catch (error) {
@@ -86,7 +95,7 @@ export default withRouter(function ({ history }) {
 
     const handleCreateSection = async (sectionName) => {
         try {
-            await createSection(board.id, sectionName)
+            await createSection(board.id, sectionName, token)
             setRender(!render)
             history.push('/')
         } catch (error) {
@@ -96,7 +105,7 @@ export default withRouter(function ({ history }) {
 
     const handleCreateNote = async (sectionId, noteSubject) => {
         try {
-            await createNote(sectionId, noteSubject)
+            await createNote(sectionId, noteSubject, token)
             setRender(!render)
             history.push('/')
         } catch (error) {
@@ -107,7 +116,7 @@ export default withRouter(function ({ history }) {
     const handleUpdateNote = async (sectionId, noteId, noteSubject) => {
         try {
 
-            await updateNote(sectionId, noteId, noteSubject)
+            await updateNote(sectionId, noteId, noteSubject, token)
             setRender(!render)
             history.push('/')
         } catch (error) {
@@ -124,7 +133,7 @@ export default withRouter(function ({ history }) {
 
     const handleDeleteSection = async (sectionId) => {
         try {
-            await deleteSection(sectionId)
+            await deleteSection(sectionId, token)
             setRender(!render)
         } catch (error) {
             setError('Error removing the section, try again later')
@@ -133,7 +142,7 @@ export default withRouter(function ({ history }) {
 
     const handleDeleteNote = async (noteId, sectionId) => {
         try {
-            await deleteNote(noteId, sectionId)
+            await deleteNote(noteId, sectionId, token)
             setRender(!render)
         } catch (error) {
             setError('Error removing the note, try again later')
@@ -148,10 +157,43 @@ export default withRouter(function ({ history }) {
         history.push('/update')
     }
 
+    const handleSignUp = async (name, email, password, verification) => {
+        try {
+            await register(name, email, password, verification)
+            history.push('/login')
+        } catch (error) {
+            debugger
+            setError(error)
+        }
+    }
+
+    const handleLogin = async (email, password) => {
+        try {
+            sessionStorage.token  = await authentication(email, password)
+            history.push('/')
+            setRender(!render)
+        } catch (error) {
+            debugger
+            setError(error.message)
+        }
+    }
+
+    const handleGoLogin = async (e) => {
+        history.push('/login')
+    }
+
+    const handleGoSignUp = async (e) => {
+        history.push('/register')
+    }
+
+
     return <>
-        {board && <Header onAddSection={handleAddSection} onChangeBoardName={handleChangeBoardName} title={board.name} />}
+        < Route path='/' render={() => board && token ? <Header onAddSection={handleAddSection} onChangeBoardName={handleChangeBoardName} title={board.name} /> : <Redirect to='login' />} />
         <Route path='/update' render={() => hint && <NewItem hint={hint} onAccept={handleAccept} onReject={handleReject} />} />
-        {sections && <Container sections={sections} onAddNote={handleAddNote} onDeleteSection={handleDeleteSection} handleModifyNote={handleModifyNote} handleDeleteNote={handleDeleteNote} />}
+        < Route  path='/' render={() => sections && <Container sections={sections} onAddNote={handleAddNote} onDeleteSection={handleDeleteSection} handleModifyNote={handleModifyNote} handleDeleteNote={handleDeleteNote} />} />
         {error && <Feedback text={error} />}
+
+        <Route path='/login' render={() => token ? <Redirect to='/' /> : < Login onGoSignUp={handleGoSignUp} onLogin={handleLogin} />} />
+        <Route path='/register' render={() => token ? <Redirect to='/' /> : < Register onGoLogin={handleGoLogin} onSignUp={handleSignUp} />} />
     </>
 })

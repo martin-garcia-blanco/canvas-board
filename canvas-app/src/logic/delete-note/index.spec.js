@@ -26,7 +26,6 @@ describe('logic deleteNote test', () => {
     })
 
     it('There is a note so should delete it', async () => {
-        debugger
         await deleteNote(noteId, sectionId)
 
         const section = await Section.findById(sectionId)

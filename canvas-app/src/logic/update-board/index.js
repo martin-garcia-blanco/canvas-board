@@ -12,15 +12,19 @@ const API_URL = process.env.REACT_APP_API_URL
  * @param {String} boardName 
  * @returns {Promise}
  */
-export default function (boardId, boardName) {
+export default function (boardId, boardName, token) {
     if(!ObjectId.isValid(boardId)) throw new ContentError(`${boardId} is not a valid id`)
     validator.string(boardName)
     validator.string.notVoid(boardName, 'boardName')
+    validator.string(token)
+    validator.string.notVoid(token, 'token')
+
     return (async () => {
         const res = await call(`${API_URL}/board/${boardId}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({boardName})
         })

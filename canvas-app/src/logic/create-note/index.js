@@ -13,16 +13,19 @@ const API_URL = process.env.REACT_APP_API_URL
  * @param {String} NoteSubject 
  * @returns {Promise} 
  */
-export default function (sectionId, NoteSubject) {
+export default function (sectionId, NoteSubject, token) {
     if (!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
     validator.string(NoteSubject)
     validator.string.notVoid(NoteSubject, 'NoteSubject')
+    validator.string(token)
+    validator.string.notVoid(token, 'token')
 
         return (async () => {
             const res = await call(`${API_URL}/note`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({ text: NoteSubject, sectionId })
             })

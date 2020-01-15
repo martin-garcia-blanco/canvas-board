@@ -4,12 +4,12 @@ const Note = require('./note')
 module.exports = new Schema({
     name: {
         type: String,
-        require: true
+        required: true
     },
 
     notes: {
         type: [Note],
-        require: true,
+        required: true,
         default: []
     }
 })

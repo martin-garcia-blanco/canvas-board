@@ -1,6 +1,6 @@
 import call from '../../utils/call'
 require('dotenv').config()
-const { errors: { ContentError } } = require('canvas-utils')
+const { errors: { ContentError }, validator } = require('canvas-utils')
 const { ObjectId } = require('canvas-data')
 const API_URL = process.env.REACT_APP_API_URL
 
@@ -12,15 +12,17 @@ const API_URL = process.env.REACT_APP_API_URL
  * @param {ObjectId} noteId 
  * @returns {Promise} 
  */
-export default function (noteId, sectionId) {
+export default function (noteId, sectionId, token) {
     if (!ObjectId.isValid(noteId)) throw new ContentError(`${noteId} is not a valid id`)
     if (!ObjectId.isValid(sectionId)) throw new ContentError(`${sectionId} is not a valid id`)
-
+    validator.string(token)
+    validator.string.notVoid(token, 'token')
     return (async () => {
         const res = await call(`${API_URL}/note/${noteId}`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({sectionId})
         })

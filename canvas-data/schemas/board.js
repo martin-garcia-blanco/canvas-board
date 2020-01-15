@@ -3,8 +3,7 @@ const { Schema, ObjectId } = require('mongoose')
 module.exports = new Schema({
     name:{
         type: String,
-        default: 'New Board',
-        require: true
+        default: 'New Board'
     },
     sections:{
         type: [ObjectId],
