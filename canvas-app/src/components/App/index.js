@@ -31,13 +31,12 @@ export default withRouter(function ({ history }) {
     const [sectionId, setSectionId] = useState(undefined)
     const [noteId, setNoteId] = useState(undefined)
     const [error, setError] = useState(undefined)
-    const { token } = sessionStorage
+    const { token, boardId } = sessionStorage
 
     useEffect(() => {
         (async () => {
             try {
                 if (token) {
-                    debugger
                     const board = await retrieveBoard(token)
                     sessionStorage.boardId = board.id
                     board && setSections(await retrieveSections(board.id, token))
@@ -162,7 +161,6 @@ export default withRouter(function ({ history }) {
             await register(name, email, password, verification)
             history.push('/login')
         } catch (error) {
-            debugger
             setError(error)
         }
     }
@@ -173,7 +171,6 @@ export default withRouter(function ({ history }) {
             history.push('/')
             setRender(!render)
         } catch (error) {
-            debugger
             setError(error.message)
         }
     }
