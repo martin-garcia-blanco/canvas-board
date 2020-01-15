@@ -31,14 +31,13 @@ export default withRouter(function ({ history }) {
     const [sectionId, setSectionId] = useState(undefined)
     const [noteId, setNoteId] = useState(undefined)
     const [error, setError] = useState(undefined)
-    const { token, boardId } = sessionStorage
+    const { token } = sessionStorage
 
     useEffect(() => {
         (async () => {
             try {
                 if (token) {
                     const board = await retrieveBoard(token)
-                    sessionStorage.boardId = board.id
                     board && setSections(await retrieveSections(board.id, token))
                     setBoard(board)
                     setError(undefined)
