@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const { name, version } = require('./package.json')
-const { env: { PORT, DB_URL, SECRET } } = process
+const { env: { PORT, TEST_DB_URL, SECRET } } = process
 const cors = require('./utils/cors')
 const {createNote, createSection, createBoard, register, authentication, deleteNote, deleteSection,updateBoard, updateNote, retrieveBoard, retrieveSections} = require('./logic')
 const { database } = require('canvas-data')
@@ -96,7 +96,7 @@ api.post('/note', jsonBodyParser, tokenVerifier, (req,res)=>{
         createNote(sectionId,text)
         .then(() => res.status(201).end())
         .catch( error => {
-            return res.status(500).json({error})
+            return res.status(500).json(error.message)
         })
     } catch(error){
         res.status(400).json(error.message)
@@ -194,5 +194,5 @@ api.post('/auth', jsonBodyParser, (req, res) => {
 })
 
 
-database.connect(DB_URL)
+database.connect(TEST_DB_URL)
     .then(()=> api.listen(PORT, () => console.log(`${name}  ${version} up running on port ${PORT}`)))

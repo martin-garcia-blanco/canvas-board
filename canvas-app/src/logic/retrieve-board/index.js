@@ -21,9 +21,8 @@ export default function(token) {
                 Authorization: `Bearer ${token}`
             }
         })
-
-        if (res.status === 200) return JSON.parse(res.body)
         
+        if (res.status === 200) return JSON.parse(res.body)        
         throw new Error(JSON.parse(res.body))
     })()
 }

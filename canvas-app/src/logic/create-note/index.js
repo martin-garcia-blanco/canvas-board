@@ -29,7 +29,6 @@ export default function (sectionId, NoteSubject, token) {
                 },
                 body: JSON.stringify({ text: NoteSubject, sectionId })
             })
-
             if (res.status === 201) return
             throw new Error(JSON.parse(res.body))
         })()

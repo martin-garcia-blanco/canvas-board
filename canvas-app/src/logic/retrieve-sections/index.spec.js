@@ -1,16 +1,25 @@
 require('dotenv').config()
-const { env: { REACT_APP_TEST_DB_URL: TEST_DB_URL } } = process
-const {retrieveSections} = require('../index')
-const { database, models: { Board, Note, Section } } = require('canvas-data')
-const { errors:{ContentError} } = require('canvas-utils')
+const { env: { REACT_APP_TEST_DB_URL: TEST_DB_URL, REACT_APP_TEST_SECRET: TEST_SECRET } } = process
+const { retrieveSections } = require('../index')
+const { database, models: { Board, Note, Section, User } } = require('canvas-data')
+const { errors: { ContentError } } = require('canvas-utils')
+const jwt = require('jsonwebtoken')
 
 describe('logic retrieveSections test', () => {
     beforeAll(() => database.connect(TEST_DB_URL))
 
-    let boardId, sectionName, noteText
+    let boardId, sectionName, noteText, token
 
     beforeEach(async () => {
-        await Promise.all([Board.deleteMany(), Section.deleteMany()])
+        await Promise.all([Board.deleteMany(), User.deleteMany(), Section.deleteMany()])
+
+        const userName = `name-${Math.random()}`
+        const email = `mail-${Math.random()}@asdf.com`
+        const password = `password-${Math.random()}`
+        const arr = []
+
+        const user = await User.create({ name: userName, password, email, board: arr })
+        token = jwt.sign({ sub: user.id }, TEST_SECRET)
 
         sectionName = `name-${Math.random()}`
         noteText = `text-${Math.random()}`
@@ -21,7 +30,7 @@ describe('logic retrieveSections test', () => {
     })
 
     it('should return an array with sections and notes', async () => {
-        const sections = await retrieveSections(boardId)
+        const sections = await retrieveSections(boardId, token)
         const section = sections[0]
         const note = section.notes[0]
 
@@ -51,29 +60,37 @@ describe('logic retrieveSections test', () => {
     }) */
 
     it('Should throw a NotFoundError, wrong boardId', async () => {
-        expect(() => retrieveSections('')).toThrow(ContentError, ' is not a valid id')
-        expect(() => retrieveSections(' \t\r')).toThrow(ContentError, ' is not a valid id')
+        expect(() => retrieveSections('', token)).toThrow(ContentError, ' is not a valid id')
+        expect(() => retrieveSections(' \t\r', token)).toThrow(ContentError, ' is not a valid id')
     })
 
-    afterAll(() => Promise.all([Board.deleteMany(), Section.deleteMany()]))
+    afterAll(() => Promise.all([Board.deleteMany(), User.deleteMany(), Section.deleteMany()]))
 
 })
 
-    describe('when board doesnt have sections', () => {
-        let boardId
+describe('when board doesnt have sections', () => {
+    let boardId, token
 
-        beforeAll(async () => {
-            await Board.deleteMany()
-            const board = await Board.create({})
-            boardId = board.id
-        })
+    beforeAll(async () => {
+        await Board.deleteMany()
+        const board = await Board.create({})
+        boardId = board.id
 
-        it('should retrieve an empty array', async () => {
-            const sections = await retrieveSections(boardId)
+        const userName = `name-${Math.random()}`
+        const email = `mail-${Math.random()}@asdf.com`
+        const password = `password-${Math.random()}`
+        const arr = []
 
-            expect(sections).toBeDefined()
-            expect(sections).toBeInstanceOf(Array)
-            expect(sections.length).toBe(0)
-        })
-        afterAll(() => Board.deleteMany())
+        const user = await User.create({ name: userName, password, email, board: arr })
+        token = jwt.sign({ sub: user.id }, TEST_SECRET)
     })
+
+    it('should retrieve an empty array', async () => {
+        const sections = await retrieveSections(boardId, token)
+
+        expect(sections).toBeDefined()
+        expect(sections).toBeInstanceOf(Array)
+        expect(sections.length).toBe(0)
+    })
+    afterAll(() => Promise.all([Board.deleteMany(), User.deleteMany(), Section.deleteMany()]))
+})
