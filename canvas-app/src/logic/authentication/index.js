@@ -1,5 +1,5 @@
 import call from '../../utils/call'
-const { validator, errors: { CredentialsError } } = require('canvas-utils')
+const { validator } = require('canvas-utils')
 const API_URL = process.env.REACT_APP_API_URL
 
 export default function (email, password) {
@@ -15,7 +15,8 @@ export default function (email, password) {
             body: JSON.stringify({ email, password })
         })
 
-		if (res.status === 200) return JSON.parse(res.body).token        
+        if (res.status === 200) return JSON.parse(res.body).token  
+              
         if (res.status === 401) throw new Error(JSON.parse(res.body))
         throw new Error(JSON.parse(res.body))
     })()

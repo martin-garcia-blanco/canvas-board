@@ -1,7 +1,7 @@
 import React from 'react'
 import './index.sass'
 
-function Header({ title, onChangeBoardName, onAddSection }) {
+function Header({ title, onChangeBoardName, onAddSection, onLogOut }) {
     return <section className="header">
         <h1 className="header__title">{title}</h1>
         <form className="header__form form" onSubmit={(event) => event.preventDefault()}>
@@ -10,6 +10,9 @@ function Header({ title, onChangeBoardName, onAddSection }) {
             </button>
             <button className="form__button" onClick={onAddSection}>
                 <i className="material-icons" id="icon--white">add_circle</i>
+            </button>
+            <button className="form__button" onClick={onLogOut} >
+            <i className="material-icons" id="icon--white">exit_to_app</i>
             </button>
         </form>
     </section>

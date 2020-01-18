@@ -17,9 +17,9 @@ export default function(name, email, password, verification) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password })
         })
-
+        debugger
         if (res.status === 201) return        
-        if (res.status === 409) throw new ConflictError(JSON.parse(res.body).message)
+        if (res.status === 409) throw new ConflictError(JSON.parse(res.body))
         throw new Error(JSON.parse(res.body).message)
     })()
 }

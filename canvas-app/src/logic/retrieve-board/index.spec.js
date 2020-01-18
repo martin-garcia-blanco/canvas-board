@@ -26,7 +26,6 @@ describe('logic retrieveBoard test', () => {
     })
 
     it('should return a board', async () => {
-        debugger
         await retrieveBoard(token)
 
         const board = await Board.findOne()

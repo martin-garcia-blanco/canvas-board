@@ -182,11 +182,16 @@ export default withRouter(function ({ history }) {
         history.push('/register')
     }
 
+    const handleLogOut = () => {
+        sessionStorage.clear()
+        setRender(!render)
+    } 
+
 
     return <>
-        < Route path='/' render={() => board && token ? <Header onAddSection={handleAddSection} onChangeBoardName={handleChangeBoardName} title={board.name} /> : <Redirect to='login' />} />
+        < Route path='/' render={() => board && token ? <Header onAddSection={handleAddSection} onChangeBoardName={handleChangeBoardName} onLogOut={handleLogOut} title={board.name} /> : <Redirect to='login' />} />
         <Route path='/update' render={() => hint && <NewItem hint={hint} onAccept={handleAccept} onReject={handleReject} />} />
-        < Route  path='/' render={() => sections && <Container sections={sections} onAddNote={handleAddNote} onDeleteSection={handleDeleteSection} handleModifyNote={handleModifyNote} handleDeleteNote={handleDeleteNote} />} />
+        < Route  exact path='/' render={() => sections && <Container sections={sections} onAddNote={handleAddNote} onDeleteSection={handleDeleteSection} handleModifyNote={handleModifyNote} handleDeleteNote={handleDeleteNote} />} />
         {error && <Feedback text={error} />}
 
         <Route path='/login' render={() => token ? <Redirect to='/' /> : < Login onGoSignUp={handleGoSignUp} onLogin={handleLogin} />} />
